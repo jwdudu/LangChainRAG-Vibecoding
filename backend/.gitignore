@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# 环境变量（含 API Key 等密钥，绝不提交）
+.env
+
+# 数据库与向量库文件（本地数据，不提交）
+*.db
+*.sqlite3
+chroma_db/
+data/
+uploads/
+
+# IDE
+.idea/
+.vscode/

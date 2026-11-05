@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"D:/Develop/VS Code/Codes/project03_VibeCoding/03_LangChainRAG项目/.claude/hooks/git-commit-guard.js\"",
+            "if": "Bash(git *)",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  }
+}
