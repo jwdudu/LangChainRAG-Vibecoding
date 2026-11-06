@@ -1,0 +1,5 @@
+# 统一换行符：文本文件在仓库里存 LF、检出也保持 LF（兼容 Docker/Linux 容器）
+* text=auto eol=lf
+
+# Windows 批处理脚本(.bat)保留 CRLF，避免 cmd.exe 兼容问题
+*.bat text eol=crlf

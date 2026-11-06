@@ -1,20 +1,41 @@
-# 企业级部署：一键拉起后端 + 前端（可选，需先安装 Docker Desktop）
-# 启动：docker compose up --build
-# 说明：当前后端用 SQLite + Chroma 持久化到卷；如需 PostgreSQL/Redis 可在此基础上扩展。
+# 企业级部署：PostgreSQL 数据库 + 后端 + 前端
+# 用法：docker compose up -d          （一次拉起所有服务）
+#       docker compose up -d postgres （只起数据库）
 
 services:
+  postgres:
+    image: postgres:16
+    container_name: rag_postgres
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: ragpassword
+      POSTGRES_DB: ragdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d ragdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build: ./backend
     environment:
       - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
       - SECRET_KEY=${SECRET_KEY:-langchain-rag-bishe-secret-2026}
-      - DATABASE_URL=sqlite:////data/rag.db
+      # 后端在容器内时，数据库主机名是服务名 postgres
+      - DATABASE_URL=postgresql+psycopg2://rag:ragpassword@postgres:5432/ragdb
       - CHROMA_PERSIST_DIR=/data/chroma_db
       - HF_HOME=/data/hf_cache
     volumes:
       - rag_data:/data
     ports:
       - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -25,3 +46,4 @@ services:
 
 volumes:
   rag_data:
+  pgdata:

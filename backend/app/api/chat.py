@@ -103,4 +103,7 @@ async def chat(
 
         yield _sse({"type": "done", "sources": sources})
 
+    # 性能优化：流式生成前释放数据库连接，避免 LLM 流式期间(5~15秒)占着连接池、导致其他请求排队超时
+    db.close()
+
     return StreamingResponse(event_stream(), media_type="text/event-stream")
